@@ -23,7 +23,8 @@ smart_punctuation = true
 [extra]
 # Sets browser theme color,
 # see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta/name/theme-color
-primary_color = "#5100ff"
+primary_color = "#C37B24"
+
 
 # If the favicon is GIF or not
 animated_favicon = false
@@ -49,8 +50,8 @@ icons = false
 links = [
   {url = "/blog", name = "Blog", icon = "journal-bookmark"},
   {url = "https://drive.google.com/file/d/1Q-saA5sHldwApYBU9NpzTtYWxCda52__/view", name = "Resume", icon = "person"},
-  {url = "https://github.com/vikramxD", name = "Github", icon = "github"},
-  {url = "https://twitter.com/V_J_S_1", name = "Twitter", icon = "twitter"},
+  {url = "https://github.com/vikramxD", name = "Github", icon = "bi bi-github"},
+  {url = "https://twitter.com/V_J_S_1", name = "Twitter", icon = "twitter-x"},
 ]
 
 [extra.footer]
