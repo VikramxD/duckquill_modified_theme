@@ -43,14 +43,14 @@ source_url = "https://github.com/vikramxd.github.io"
 # Display Atom/RSS feed button in the nav
 show_feed = false
 # Whether to use icons in the nav
-icons = true
+icons = false
 # Links used in the nav; any icon from https://icons.getbootstrap.com
 # can be used as the icon. The bi- prefix should not be added.
 links = [
   {url = "/blog", name = "Blog", icon = "journal-bookmark"},
   {url = "https://drive.google.com/file/d/1Q-saA5sHldwApYBU9NpzTtYWxCda52__/view", name = "Resume", icon = "person"},
-  {url = "https://github.com/vikramxD", name = "", icon = "github"},
-  {url = "https://twitter.com/V_J_S_1", name = "", icon = "twitter"},
+  {url = "https://github.com/vikramxD", name = "Github", icon = "github"},
+  {url = "https://twitter.com/V_J_S_1", name = "Twitter", icon = "twitter"},
 ]
 
 [extra.footer]
