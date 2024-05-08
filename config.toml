@@ -1,5 +1,5 @@
-title = "Juxhin Dyrmishi Brigjaj | Digital Horror"
-base_url = "https://blog.digital-horror.com"
+title = "Vikramjeet Singh"
+base_url = "https://vikramxd.github.io"
 
 compile_sass = true
 minify_html = true
@@ -34,10 +34,10 @@ animated_favicon = false
 date_format = "%d %B %Y"
 
 # URL to issue tracker
-issues_url = "https://github.com/JuxhinDB/blog.digital-horror.com/issues"
+issues_url = "https://github.com/vikramxd.github.io/issues"
 
 # URL to website's source code
-source_url = "https://github.com/JuxhinDB/blog.digital-horror.com"
+source_url = "https://github.com/vikramxd.github.io"
 
 [extra.nav]
 # Display Atom/RSS feed button in the nav
@@ -48,9 +48,8 @@ icons = true
 # can be used as the icon. The bi- prefix should not be added.
 links = [
   {url = "$BASE_URL/blog", name = "Blog", icon = "journal-bookmark"},
-  {url = "https://github.com/JuxhinDB", name = "", icon = "github"},
-  {url = "https://www.linkedin.com/in/juxhin-db/", name = "", icon = "linkedin"},
-  {url = "https://twitter.com/juxhindb", name = "", icon = "twitter-x"},
+  {url = "https://github.com/vikramxD", name = "", icon = "github"},
+  {url = "https://twitter.com/V_J_S_1", name = "", icon = "twitter-x"},
 ]
 
 [extra.footer]
@@ -69,7 +68,7 @@ show_powered_by = true
 # the needed rel="me" link is set in the head based on these.
 [extra.comments]
 # Your Mastodon API host; this should be where you have an account
-host = "mstdn.social"
+host = "mastodon.social"
 # Used to determine who the original/verified poster is;
 # role may be expanded in the future (e.g. for moderation).
-user = "juxhin"
+user = "vikramxD"
