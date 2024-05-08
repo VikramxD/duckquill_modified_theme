@@ -1,24 +1,32 @@
 /*!
- * Duckquill v1.1.0 (https://daudix.codeberg.page/duckquill)
- * Copyright 2024 David "Daudix" Lapshin
+ * Duckquill v1.0.0 (https://daudix.codeberg.page/duckquill)
+ * Copyright 2023 David "Daudix" Lapshin
  * Licensed under MIT (https://codeberg.org/daudix/duckquill/src/branch/main/LICENSE)
+ *
+ * Based on OS Component Website which shamelessly stole CSS from systemd
+ * https://github.com/jimmac/os-component-website
+ * https://github.com/systemd/systemd/tree/main/docs
  */
 
-@use "normalize";
+ @use "normalize";
 
-@use "variables";
-@use "main";
-
-@use "article-list";
-@use "buttons";
-@use "comments";
-@use "crt";
-@use "footer";
-@use "johnvertisement";
-@use "links";
-@use "media";
-@use "nav";
-@use "not-found";
-@use "post-nav";
-@use "statements";
-@use "tags";
+ @use "variables";
+ @use "fonts";
+ @use "main";
+ 
+ @use "bootstrap-icons";
+ @use "buttons";
+ @use "comments";
+ @use "crt";
+ @use "footer";
+ @use "gnome-hig";
+ @use "links";
+ @use "media";
+ @use "nav";
+ @use "not-found";
+ @use "post-nav";
+ @use "statements";
+ @use "tags";
+ 
+ @import url("syntax-theme-dark.css") (prefers-color-scheme: dark);
+ @import url("syntax-theme-light.css") (prefers-color-scheme: light);
