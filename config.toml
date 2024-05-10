@@ -52,7 +52,7 @@ links = [
   {url = "https://drive.google.com/file/d/1Q-saA5sHldwApYBU9NpzTtYWxCda52__/view", name = "Resume", icon = "person"},
   {url = "https://github.com/vikramxD", name = "", icon = "github"},
   {url = "https://twitter.com/V_J_S_1", name = "", icon = "twitter-x"},
-  {url = "https://huggingface.co/VikramSingh178", name = "", icon = "huggingface"},
+  {url = "https://huggingface.co/VikramSingh178", name = "HuggingFace", icon = "emoji-smile"},
 ]
 
 [extra.footer]
