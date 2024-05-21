@@ -280,3 +280,52 @@ class MultiHeadAttention(nn.Module):
         return output
 
 ```
+
+### Encoder Block 
+
+An Encoder layer consists of a Multi-Head Attention layer, a Position-wise Feed-Forward layer, and two Layer Normalization layers.
+The EncoderLayer class initializes with input parameters and components, including a MultiHeadAttention module, a PositionWiseFeedForward module, two layer normalization modules, and a dropout layer. The forward methods computes the encoder layer output by applying self-attention, adding the attention output to the input tensor, and normalizing the result. Then, it computes the position-wise feed-forward output, combines it with the normalized self-attention output, and normalizes the final result before returning the processed tensor.
+
+```python
+import torch
+import torch.nn as nn 
+
+
+class EncoderLayer(nn.Module):
+    def __init__(self, embedding_dim, num_heads, d_ff, dropout):
+        """
+        Initializes an EncoderLayer module.
+
+        Args:
+            d_model (int): The dimensionality of the input and output feature vectors.
+            num_heads (int): The number of attention heads.
+            d_ff (int): The dimensionality of the feed-forward layer.
+            dropout (float): The dropout probability.
+
+        """
+        super(EncoderLayer, self).__init__()
+        self.self_attn = MultiHeadAttention(embedding_dim, num_heads)
+        self.feed_forward = PositionWiseFeedForward(embedding_dim, d_ff)
+        self.norm1 = LayerNormalization(embedding_dim)
+        self.norm2 = LayerNormalization(embedding_dim)
+        self.dropout = nn.Dropout(dropout)
+        
+    def forward(self, x, mask):
+        """
+        Performs a forward pass of the EncoderLayer module.
+
+        Args:
+            x (torch.Tensor): The input tensor of shape (batch_size, seq_len, d_model).
+            mask (torch.Tensor): The attention mask tensor of shape (batch_size, seq_len, seq_len).
+
+        Returns:
+            torch.Tensor: The output tensor of shape (batch_size, seq_len, d_model).
+
+        """
+        attn_output = self.self_attn(x, x, x, mask)
+        x = self.norm1(x + self.dropout(attn_output))
+        ff_output = self.feed_forward(x)
+        x = self.norm2(x + self.dropout(ff_output))
+        return x
+
+```
