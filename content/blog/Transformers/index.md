@@ -188,89 +188,95 @@ import torch
 import torch.nn as nn
 
 
-class MultiheadAttention(nn.Module):
-    """
-    A multi-head attention module.
+class MultiHeadAttention(nn.Module):
+    def __init__(self, embedding_dim, num_heads):
+        """
+        Initializes the MultiHeadAttention module.
 
-    Args:
-        embedding_dim (int): The dimensionality of the input embeddings.
-        num_heads (int): The number of attention heads.
-        dropout (float): The dropout probability.
+        Args:
+            embedding_dim (int): The input and output dimension of the model.
+            num_heads (int): The number of attention heads.
 
-    Attributes:
-        embedding_dim (int): The dimensionality of the input embeddings.
-        num_heads (int): The number of attention heads.
-    """
-
-    def __init__(self, embedding_dim, num_heads, dropout):
-        super().__init__()
+        Raises:
+            AssertionError: If embedding_dim is not divisible by num_heads.
+        """
+        super(MultiHeadAttention, self).__init__()
+        assert embedding_dim % num_heads == 0, "embedding_dim must be divisible by num_heads"
+        
         self.embedding_dim = embedding_dim
         self.num_heads = num_heads
-        assert embedding_dim % num_heads == 0
-        self.dropout = nn.Dropout(dropout)
-        self.d_k = embedding_dim // num_heads
-        self.w_q = nn.Linear(embedding_dim, embedding_dim)
-        self.w_k = nn.Linear(embedding_dim, embedding_dim)
-        self.w_v = nn.Linear(embedding_dim, embedding_dim)
-        self.w_o = nn.Linear(embedding_dim, embedding_dim)
-
-    @staticmethod
-    def attention(query, key, value, mask, dropout: nn.Dropout):
+        self.d_k = self.embedding_dim // num_heads
+        
+        self.W_q = nn.Linear(embedding_dim,embedding_dim)
+        self.W_k = nn.Linear(embedding_dim, embedding_dim)
+        self.W_v = nn.Linear(embedding_dim, embedding_dim)
+        self.W_o = nn.Linear(embedding_dim, embedding_dim)
+        
+    def scaled_dot_product_attention(self, Q, K, V, mask=None):
         """
-        Compute the scaled dot-product attention.
+        Performs scaled dot product attention.
 
         Args:
-            query (torch.Tensor): The query tensor.
-            key (torch.Tensor): The key tensor.
-            value (torch.Tensor): The value tensor.
-            mask (torch.Tensor): The attention mask tensor.
-            dropout (nn.Dropout): The dropout layer.
+            Q (torch.Tensor): The query tensor of shape (batch_size, seq_length, embedding_dim).
+            K (torch.Tensor): The key tensor of shape (batch_size, seq_length, embedding_dim).
+            V (torch.Tensor): The value tensor of shape (batch_size, seq_length, embedding_dim).
+            mask (torch.Tensor, optional): The attention mask tensor of shape (batch_size, seq_length, seq_length).
 
         Returns:
-            torch.Tensor: The output tensor after attention.
-            torch.Tensor: The attention scores.
+            torch.Tensor: The output tensor of shape (batch_size, seq_length, embedding_dim).
         """
-        d_k = query.shape[-1]
-        attention_scores = (query @ key.transpose(-2, -1)) / torch.sqrt(d_k)
+        attn_scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
         if mask is not None:
-            attention_scores.masked_fill_(mask == 0, 1e-9)
-            attention_scores = attention_scores.softmax(dim=-1)
-        if dropout is not None:
-            attention_scores = dropout(attention_scores)
-        return (attention_scores @ value), attention_scores
-
-    def forward(self, q, k, v, mask):
+            attn_scores = attn_scores.masked_fill(mask == 0, -1e9)
+        attn_probs = torch.softmax(attn_scores, dim=-1)
+        output = torch.matmul(attn_probs, V)
+        return output
+        
+    def split_heads(self, x):
         """
-        Perform forward pass of the multi-head attention module.
+        Splits the input tensor into multiple heads.
 
         Args:
-            q (torch.Tensor): The query tensor.
-            k (torch.Tensor): The key tensor.
-            v (torch.Tensor): The value tensor.
-            mask (torch.Tensor): The attention mask tensor.
+            x (torch.Tensor): The input tensor of shape (batch_size, seq_length, embedding_dim).
 
         Returns:
-            torch.Tensor: The output tensor after attention.
+            torch.Tensor: The tensor with shape (batch_size, num_heads, seq_length, d_k).
         """
-        query = self.w_q(q)
-        key = self.w_k(k)
-        value = self.w_v(v)
-        # (Batch,Sequence_len,embedding_dim)--> (Batch,Sequence_Len,num_heads,d_k) --> (Batch,num_heads,Sequence_len,d_k)
-        query = query.view(
-            query.shape[0], query.shape[1], self.num_heads, self.d_k
-        ).transpose(1, 2)
-        key = query.view(
-            key.shape[0], key.shape[1], self.num_heads, self.d_k
-        ).transpose(1, 2)
-        query = query.view(
-            value.shape[0], value.shape[1], self.num_heads, self.d_k
-        ).transpose(1, 2)
+        batch_size, seq_length, embedding_dim = x.size()
+        return x.view(batch_size, seq_length, self.num_heads, self.d_k).transpose(1, 2)
+        
+    def combine_heads(self, x):
+        """
+        Combines the heads of the input tensor.
 
-        x, self.attention_scores = MultiheadAttention.attention(
-            query, key, value, mask, self.dropout
-        )
-        # (Batch ,num_heads ,seq_len,d_k) => (Batch,Seq_length,num_heads,d_k)
-        x = x.transpose(1, 2).contigous().view(x.shape[0], -1, self.h * self.d_k)
-        return self.w_o(x)
+        Args:
+            x (torch.Tensor): The input tensor of shape (batch_size, num_heads, seq_length, d_k).
+
+        Returns:
+            torch.Tensor: The tensor with shape (batch_size, seq_length, embedding_dim).
+        """
+        batch_size, _, seq_length, d_k = x.size()
+        return x.transpose(1, 2).contiguous().view(batch_size, seq_length, self.embedding_dim)
+        
+    def forward(self, Q, K, V, mask=None):
+        """
+        Performs forward pass of the MultiHeadAttention module.
+
+        Args:
+            Q (torch.Tensor): The query tensor of shape (batch_size, seq_length, embedding_dim).
+            K (torch.Tensor): The key tensor of shape (batch_size, seq_length, embedding_dim).
+            V (torch.Tensor): The value tensor of shape (batch_size, seq_length, embedding_dim).
+            mask (torch.Tensor, optional): The attention mask tensor of shape (batch_size, seq_length, seq_length).
+
+        Returns:
+            torch.Tensor: The output tensor of shape (batch_size, seq_length, embedding_dim).
+        """
+        Q = self.split_heads(self.W_q(Q))
+        K = self.split_heads(self.W_k(K))
+        V = self.split_heads(self.W_v(V))
+        
+        attn_output = self.scaled_dot_product_attention(Q, K, V, mask)
+        output = self.W_o(self.combine_heads(attn_output))
+        return output
 
 ```
