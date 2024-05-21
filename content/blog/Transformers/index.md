@@ -286,26 +286,28 @@ class MultiHeadAttention(nn.Module):
 An Encoder layer consists of a Multi-Head Attention layer, a Position-wise Feed-Forward layer, and two Layer Normalization layers.
 The EncoderLayer class initializes with input parameters and components, including a MultiHeadAttention module, a PositionWiseFeedForward module, two layer normalization modules, and a dropout layer. The forward methods computes the encoder layer output by applying self-attention, adding the attention output to the input tensor, and normalizing the result. Then, it computes the position-wise feed-forward output, combines it with the normalized self-attention output, and normalizes the final result before returning the processed tensor.
 
+### Implementation of the Encoder Block
+
 ```python
 import torch
 import torch.nn as nn 
 
 
 class EncoderLayer(nn.Module):
-    def __init__(self, embedding_dim, num_heads, d_ff, dropout):
+    def __init__(self, embedding_dim, num_heads, feed_forward_dim, dropout):
         """
         Initializes an EncoderLayer module.
 
         Args:
-            d_model (int): The dimensionality of the input and output feature vectors.
+            embedding_dim (int): The dimensionality of the input and output feature vectors.
             num_heads (int): The number of attention heads.
-            d_ff (int): The dimensionality of the feed-forward layer.
+            feed_forward_dim (int): The dimensionality of the feed-forward layer.
             dropout (float): The dropout probability.
 
         """
         super(EncoderLayer, self).__init__()
         self.self_attn = MultiHeadAttention(embedding_dim, num_heads)
-        self.feed_forward = PositionWiseFeedForward(embedding_dim, d_ff)
+        self.feed_forward = FeedForward(embedding_dim,feed_forward_dim)
         self.norm1 = LayerNormalization(embedding_dim)
         self.norm2 = LayerNormalization(embedding_dim)
         self.dropout = nn.Dropout(dropout)
