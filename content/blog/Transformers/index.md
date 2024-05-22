@@ -335,11 +335,25 @@ class EncoderLayer(nn.Module):
 
 After Encoder the Keys and Values from the output are consumed and Query is provided by the Output Embedding in the Decoder the decoder layer consists of two Multi-Head Attention layers, a Position-wise Feed-Forward layer, and three Layer Normalization layers.
 
+### Implementation of the Decoder Layer 
+
 ```python 
+
 import torch 
 import torch.nn as nn
+
 class DecoderLayer(nn.Module):
     def __init__(self, embedding_dim, num_heads, feed_forward_dim, dropout):
+        """
+        Initializes a DecoderLayer module.
+
+        Args:
+            embedding_dim (int): The dimension of the input embeddings.
+            num_heads (int): The number of attention heads.
+            feed_forward_dim (int): The dimension of the feed-forward layer.
+            dropout (float): The dropout probability.
+
+        """
         super(DecoderLayer, self).__init__()
         self.self_attn = MultiHeadAttention(embedding_dim, num_heads)
         self.cross_attn = MultiHeadAttention(embedding_dim, num_heads)
@@ -350,6 +364,19 @@ class DecoderLayer(nn.Module):
         self.dropout = nn.Dropout(dropout)
         
     def forward(self, x, enc_output, src_mask, tgt_mask):
+        """
+        Performs a forward pass of the DecoderLayer module.
+
+        Args:
+            x (torch.Tensor): The input tensor.
+            enc_output (torch.Tensor): The output of the encoder.
+            src_mask (torch.Tensor): The mask for the source sequence.
+            tgt_mask (torch.Tensor): The mask for the target sequence.
+
+        Returns:
+            torch.Tensor: The output tensor.
+
+        """
         attn_output = self.self_attn(x, x, x, tgt_mask)
         x = self.norm1(x + self.dropout(attn_output))
         attn_output = self.cross_attn(x, enc_output, enc_output, src_mask)
@@ -358,4 +385,7 @@ class DecoderLayer(nn.Module):
         x = self.norm3(x + self.dropout(ff_output))
         return x
 
+### Building the Transformer 
+
+Now that we have built every layer Lets combine the to Build the Transformer 
 ```
