@@ -329,5 +329,33 @@ class EncoderLayer(nn.Module):
         ff_output = self.feed_forward(x)
         x = self.norm2(x + self.dropout(ff_output))
         return x
+```
+
+### Decoder Layer 
+
+After Encoder the Keys and Values from the output are consumed and Query is provided by the Output Embedding in the Decoder the decoder layer consists of two Multi-Head Attention layers, a Position-wise Feed-Forward layer, and three Layer Normalization layers.
+
+```python 
+import torch 
+import torch.nn as nn
+class DecoderLayer(nn.Module):
+    def __init__(self, embedding_dim, num_heads, feed_forward_dim, dropout):
+        super(DecoderLayer, self).__init__()
+        self.self_attn = MultiHeadAttention(embedding_dim, num_heads)
+        self.cross_attn = MultiHeadAttention(embedding_dim, num_heads)
+        self.feed_forward = FeedForwardBlock(embedding_dim, feed_forward_dim)
+        self.norm1 = LayerNormalization(d_model)
+        self.norm2 = LayerNormalization(d_model)
+        self.norm3 = LayerNormalization(d_model)
+        self.dropout = nn.Dropout(dropout)
+        
+    def forward(self, x, enc_output, src_mask, tgt_mask):
+        attn_output = self.self_attn(x, x, x, tgt_mask)
+        x = self.norm1(x + self.dropout(attn_output))
+        attn_output = self.cross_attn(x, enc_output, enc_output, src_mask)
+        x = self.norm2(x + self.dropout(attn_output))
+        ff_output = self.feed_forward(x)
+        x = self.norm3(x + self.dropout(ff_output))
+        return x
 
 ```
