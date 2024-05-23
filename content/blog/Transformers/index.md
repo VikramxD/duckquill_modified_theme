@@ -1,10 +1,10 @@
 +++
-title = "Transformers Implementation and Training with Pytorch and Lightning"
+title = "Transformers Implementation with Pure Pytorch"
 description = "A super comprehensive and detailed guide to understanding the Transformer model and implementing it using PyTorch and Pytorch Lightning."
-date = 2024-05-10
+date = 2024-05-23
 
 [taxonomies]
-tags = ["ML Research Paper Implementation", "Lightning"]
+tags = ["ML Research Paper Implementation"]
 +++
 
 ### Introduction
