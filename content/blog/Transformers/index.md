@@ -1,6 +1,6 @@
 +++
-title = "Transformers Implementation with Pure Pytorch"
-description = "A super comprehensive and detailed guide to understanding the Transformer model and implementing it using PyTorch and Pytorch Lightning."
+title = "Implementing the Transformer Model from Scratch "
+description = "A super comprehensive and detailed guide to understanding the Transformer model and implementing it using PyTorch."
 date = 2024-05-23
 
 [taxonomies]
